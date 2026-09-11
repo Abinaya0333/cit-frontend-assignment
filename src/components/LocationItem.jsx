@@ -3,8 +3,15 @@ export default function LocationItem({ location, isSelected, onSelect, onEdit, o
     <li
       className={`location-item ${isSelected ? 'is-selected' : ''}`}
       onClick={() => onSelect(location.id)}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect(location.id);
+        }
+      }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
+      <div className="location-item-row">
         <div style={{ minWidth: 0, flex: 1 }}>
           <div className="location-name" title={location.name}>
             {location.name}
@@ -16,20 +23,24 @@ export default function LocationItem({ location, isSelected, onSelect, onEdit, o
 
         <div className="location-actions">
           <button
+            type="button"
             className="btn"
             onClick={(e) => {
               e.stopPropagation();
               onEdit(location);
             }}
+            aria-label={`Edit ${location.name}`}
           >
             Edit
           </button>
           <button
+            type="button"
             className="btn btn-danger"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(location.id);
             }}
+            aria-label={`Delete ${location.name}`}
           >
             Delete
           </button>
