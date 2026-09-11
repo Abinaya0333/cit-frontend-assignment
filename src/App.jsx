@@ -1,73 +1,98 @@
+import { useMemo, useState } from 'react';
+import MapView from './components/MapView.jsx';
+import Sidebar from './components/Sidebar.jsx';
+import LocationFormModal from './components/LocationFormModal.jsx';
 import { useLocations } from './hooks/useLocations.js';
 
-function App() {
+export default function App() {
   const {
     locations,
     selectedId,
+    selectedLocation,
     isLoaded,
     addLocation,
+    updateLocation,
     removeLocation,
     selectLocation,
   } = useLocations();
 
+  const [query, setQuery] = useState('');
+  const [pendingCoords, setPendingCoords] = useState(null);
+  const [editingLocation, setEditingLocation] = useState(null);
+
+  const filteredLocations = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return locations;
+    return locations.filter((loc) => loc.name.toLowerCase().includes(q));
+  }, [locations, query]);
+
+  const handleMapClick = ({ lat, lng }) => {
+    setPendingCoords({ lat, lng });
+  };
+
+  const handleAddSubmit = ({ name }) => {
+    if (!pendingCoords) return;
+    addLocation({ name, lat: pendingCoords.lat, lng: pendingCoords.lng });
+    setPendingCoords(null);
+  };
+
+  const handleEditSubmit = ({ name }) => {
+    if (!editingLocation) return;
+    updateLocation(editingLocation.id, { name });
+    setEditingLocation(null);
+  };
+
+  const handleDelete = (id) => {
+    if (!window.confirm('Delete this location?')) return;
+    removeLocation(id);
+  };
+
   if (!isLoaded) {
-    return <div style={{ padding: 20 }}>Loading…</div>;
+    return (
+      <div style={{ display: 'grid', placeItems: 'center', height: '100vh', fontFamily: 'system-ui' }}>
+        Loading…
+      </div>
+    );
   }
 
   return (
-    <div style={{ padding: 20, fontFamily: 'system-ui, sans-serif' }}>
-      <h1>Favorites Debug Panel</h1>
-      <p>This is temporary — will be replaced by the map + sidebar.</p>
+    <div style={{ display: 'flex', height: '100vh', fontFamily: 'system-ui, sans-serif' }}>
+      <Sidebar
+        locations={locations}
+        filteredLocations={filteredLocations}
+        selectedId={selectedId}
+        query={query}
+        onQueryChange={setQuery}
+        onSelect={selectLocation}
+        onEdit={setEditingLocation}
+        onDelete={handleDelete}
+      />
 
-      <button
-        onClick={() =>
-          addLocation({
-            name: `Test ${locations.length + 1}`,
-            lat: 12.9716 + Math.random() * 0.1,
-            lng: 77.5946 + Math.random() * 0.1,
-          })
-        }
-        style={{ padding: '8px 14px', marginBottom: 16 }}
-      >
-        Add fake location
-      </button>
+      <div style={{ flex: 1, position: 'relative' }}>
+        <MapView
+          locations={locations}
+          selectedId={selectedId}
+          selectedLocation={selectedLocation}
+          onMapClick={handleMapClick}
+          onSelect={selectLocation}
+        />
+      </div>
 
-      {locations.length === 0 ? (
-        <p>No locations yet. Click the button above.</p>
-      ) : (
-        <ul style={{ listStyle: 'none', padding: 0, maxWidth: 400 }}>
-          {locations.map((loc) => (
-            <li
-              key={loc.id}
-              onClick={() => selectLocation(loc.id)}
-              style={{
-                padding: 10,
-                marginBottom: 6,
-                border: '1px solid #ccc',
-                borderRadius: 6,
-                cursor: 'pointer',
-                background: loc.id === selectedId ? '#e3f2fd' : 'white',
-              }}
-            >
-              <strong>{loc.name}</strong>
-              <div style={{ fontSize: 12, color: '#666' }}>
-                {loc.lat.toFixed(4)}, {loc.lng.toFixed(4)}
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeLocation(loc.id);
-                }}
-                style={{ marginTop: 6 }}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <LocationFormModal
+        open={!!pendingCoords}
+        mode="add"
+        initialValues={pendingCoords || undefined}
+        onCancel={() => setPendingCoords(null)}
+        onSubmit={handleAddSubmit}
+      />
+
+      <LocationFormModal
+        open={!!editingLocation}
+        mode="edit"
+        initialValues={editingLocation || undefined}
+        onCancel={() => setEditingLocation(null)}
+        onSubmit={handleEditSubmit}
+      />
     </div>
   );
 }
-
-export default App;
