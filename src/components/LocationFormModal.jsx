@@ -6,7 +6,7 @@ export default function LocationFormModal({ open, initialValues, mode, onCancel,
 
   useEffect(() => {
     if (open) {
-      setName(initialValues?.name || '');
+      setName(initialValues?.name || initialValues?.suggestedName || '');
       setError('');
     }
   }, [open, initialValues]);
@@ -28,35 +28,14 @@ export default function LocationFormModal({ open, initialValues, mode, onCancel,
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.4)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-      }}
-      onClick={onCancel}
-    >
-      <form
-        onClick={(e) => e.stopPropagation()}
-        onSubmit={handleSubmit}
-        style={{
-          background: 'white',
-          padding: 20,
-          borderRadius: 10,
-          width: 'min(90vw, 360px)',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-        }}
-      >
-        <h2 style={{ margin: 0, marginBottom: 12, fontSize: 16 }}>
+    <div className="modal-backdrop" onClick={onCancel}>
+      <form className="modal-card" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
+        <h2 className="modal-title">
           {mode === 'edit' ? 'Edit location' : 'Name this location'}
         </h2>
 
         {initialValues?.lat !== undefined && (
-          <p style={{ fontSize: 12, color: '#6b7280', marginTop: 0 }}>
+          <p className="modal-coords">
             {initialValues.lat.toFixed(4)}, {initialValues.lng.toFixed(4)}
           </p>
         )}
@@ -67,46 +46,17 @@ export default function LocationFormModal({ open, initialValues, mode, onCancel,
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="e.g. Home, Office, Cafe…"
-          style={{
-            width: '100%',
-            padding: '10px 12px',
-            border: '1px solid #d1d5db',
-            borderRadius: 8,
-            fontSize: 14,
-            boxSizing: 'border-box',
-          }}
+          className="modal-input"
         />
 
-        {error && (
-          <div style={{ color: '#b91c1c', fontSize: 12, marginTop: 6 }}>{error}</div>
-        )}
+        {error && <div className="modal-error">{error}</div>}
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
-          <button
-            type="button"
-            onClick={onCancel}
-            style={{
-              padding: '8px 14px',
-              border: '1px solid #d1d5db',
-              background: 'white',
-              borderRadius: 8,
-              cursor: 'pointer',
-            }}
-          >
+        <div className="modal-actions">
+          <button type="button" className="btn" onClick={onCancel}>
             Cancel
           </button>
-          <button
-            type="submit"
-            style={{
-              padding: '8px 14px',
-              border: 'none',
-              background: '#2563eb',
-              color: 'white',
-              borderRadius: 8,
-              cursor: 'pointer',
-            }}
-          >
-            {mode === 'edit' ? 'Save' : 'Add'}
+          <button type="submit" className="btn btn-primary">
+            {mode === 'edit' ? 'Save' : 'Add location'}
           </button>
         </div>
       </form>

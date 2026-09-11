@@ -75,11 +75,14 @@ export default function MapView({
             click: () => onSelect(loc.id),
           }}
         >
-          <Popup>
-            <strong>{loc.name}</strong>
-            <br />
-            {loc.lat.toFixed(4)}, {loc.lng.toFixed(4)}
-          </Popup>
+         <Popup>
+  <div style={{ minWidth: 140 }}>
+    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>{loc.name}</div>
+    <div style={{ fontSize: 12, color: '#6b7280', fontVariantNumeric: 'tabular-nums' }}>
+      {loc.lat.toFixed(4)}, {loc.lng.toFixed(4)}
+    </div>
+  </div>
+</Popup>
         </Marker>
       ))}
     </MapContainer>

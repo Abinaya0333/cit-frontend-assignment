@@ -4,6 +4,20 @@ import Sidebar from './components/Sidebar.jsx';
 import LocationFormModal from './components/LocationFormModal.jsx';
 import { useLocations } from './hooks/useLocations.js';
 
+async function reverseGeocode(lat, lng) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`,
+      { headers: { 'Accept-Language': 'en' } }
+    );
+    if (!res.ok) return '';
+    const data = await res.json();
+    const a = data.address || {};
+    return a.city || a.town || a.village || a.county || a.state || a.country || '';
+  } catch {
+    return '';
+  }
+}
 export default function App() {
   const {
     locations,
@@ -56,8 +70,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', fontFamily: 'system-ui, sans-serif' }}>
-      <Sidebar
+<div className="app-shell">      <Sidebar
         locations={locations}
         filteredLocations={filteredLocations}
         selectedId={selectedId}
@@ -68,8 +81,7 @@ export default function App() {
         onDelete={handleDelete}
       />
 
-      <div style={{ flex: 1, position: 'relative' }}>
-        <MapView
+<div className="map-wrapper">        <MapView
           locations={locations}
           selectedId={selectedId}
           selectedLocation={selectedLocation}

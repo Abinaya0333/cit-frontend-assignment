@@ -15,43 +15,31 @@ export default function Sidebar({
   const hasResults = filteredLocations.length > 0;
 
   return (
-    <aside
-      style={{
-        width: 320,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRight: '1px solid #e5e7eb',
-        background: 'white',
-        overflow: 'hidden',
-      }}
-    >
-      <div style={{ padding: '16px 14px 8px' }}>
-        <h1 style={{ fontSize: 18, margin: 0 }}>Favorite Locations</h1>
-        <p style={{ fontSize: 12, color: '#6b7280', margin: '4px 0 0' }}>
-          Click on the map to add a new location.
-        </p>
+    <aside className="sidebar">
+      <div className="sidebar-header">
+        <h1 className="sidebar-title">Favorite Locations</h1>
+        <p className="sidebar-subtitle">Click on the map to add a new location.</p>
       </div>
 
       <SearchBar value={query} onChange={onQueryChange} />
 
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div className="location-list">
         {!hasAnyLocations && (
-          <div style={{ padding: 20, color: '#6b7280', fontSize: 14, textAlign: 'center' }}>
-            No saved locations yet.
-            <br />
-            Click anywhere on the map to add one.
+          <div className="empty-state">
+            <strong>No saved locations yet</strong>
+            Click anywhere on the map to add your first one.
           </div>
         )}
 
         {hasAnyLocations && !hasResults && (
-          <div style={{ padding: 20, color: '#6b7280', fontSize: 14, textAlign: 'center' }}>
-            No locations match "{query}".
+          <div className="empty-state">
+            <strong>No matches found</strong>
+            Nothing matches "{query}". Try a different search.
           </div>
         )}
 
         {hasResults && (
-          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+          <ul className="location-list" style={{ padding: 0, margin: 0 }}>
             {filteredLocations.map((loc) => (
               <LocationItem
                 key={loc.id}

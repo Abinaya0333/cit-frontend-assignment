@@ -1,16 +1,21 @@
-# React + Vite
+# Favorite Locations Map
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React app to save, manage, and explore favorite locations on an interactive map.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Click the map** to add a new favorite location
+- Saved locations appear as **map markers** and **sidebar items** simultaneously
+- **Select** from the sidebar to fly the map to it and highlight its marker
+- **Edit** location names inline
+- **Delete** with confirmation and a 5-second **Undo** toast
+- **Live search** across saved locations with empty-state messages
+- **Persistent** across refreshes via `localStorage`
+- **Responsive** — sidebar stacks below the map on small screens
+- **Reverse geocoding** suggests a name when clicking the map (via Nominatim)
 
-## React Compiler
+## Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
